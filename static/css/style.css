@@ -1,0 +1,12 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: lightblue;
+ }
+ 
+ h1 {
+    color: #007bff;
+ }
+ 
+ form {
+    margin-bottom: 20px;
+ }
