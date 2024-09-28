@@ -14,6 +14,25 @@ def get_db_connection():
     )
     return conn
 
+# Función para crear la tabla si no existe
+def create_table_if_not_exists():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS tablaprueba1 (
+            id SERIAL PRIMARY KEY,
+            nombre VARCHAR(100) NOT NULL,
+            edad INTEGER NOT NULL,
+            carrera VARCHAR(50) NOT NULL
+        )
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# Llama a la función para crear la tabla al iniciar la aplicación
+create_table_if_not_exists()
+
 @app.route('/')
 def index():
     return render_template('index.html')
