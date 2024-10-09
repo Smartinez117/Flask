@@ -5,6 +5,13 @@ document.getElementById('create-form').addEventListener('submit', async function
     const edad = document.getElementById('edad').value;
     const carrera = document.getElementById('carrera').value;
 
+    // Validar que la carrera esté en la lista permitida
+    const carrerasPermitidas = ['mecanica', 'quimica', 'sistemas', 'electrica'];
+    if (!carrerasPermitidas.includes(carrera.toLowerCase())) {
+        alert('La carrera debe ser uno de los siguientes: mecanica, quimica, sistemas, electrica.');
+        return;
+    }
+
     const response = await fetch('/create', {
         method: 'POST',
         headers: {
@@ -24,6 +31,13 @@ document.getElementById('update-form').addEventListener('submit', async function
     const nombre = document.getElementById('update-nombre').value;
     const edad = document.getElementById('update-edad').value;
     const carrera = document.getElementById('update-carrera').value;
+
+    // Validar que la carrera esté en la lista permitida
+    const carrerasPermitidas = ['mecanica', 'quimica', 'sistemas', 'electrica'];
+    if (!carrerasPermitidas.includes(carrera.toLowerCase())) {
+        alert('La carrera debe ser uno de los siguientes: mecanica, quimica, sistemas, electrica.');
+        return;
+    }
 
     const response = await fetch(`/update/${recordId}`, {
         method: 'PUT',
