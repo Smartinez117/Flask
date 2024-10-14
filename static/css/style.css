@@ -1,12 +1,27 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: lightblue;
- }
- 
- h1 {
-    color: #007bff;
- }
- 
- form {
-    margin-bottom: 20px;
- }
+   font-family: Arial, sans-serif;
+   background-color: cornflowerblue;
+}
+
+h1, h2 {
+   color: #333;
+}
+
+form {
+   margin-bottom: 20px;
+}
+
+input[type='text'],
+input[type='number'] {
+   padding: 10px;
+   margin-right: 10px;
+}
+
+button {
+   padding: 10px 15px;
+}
+
+#records,
+#record-details {
+   margin-top: 20px;
+}

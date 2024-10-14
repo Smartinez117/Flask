@@ -13,20 +13,27 @@
 <form id="create-form">
    <input type="text" id="nombre" placeholder="Nombre" required />
    <input type="number" id="edad" placeholder="Edad" required />
-   <input type="text" id="carrera" placeholder="Carrera (mecanica, quimica, sistemas, electrica)" required maxlength="20" />
+   <input type="number" id="carrera_id" placeholder="ID de Carrera" required />
    <button type="submit">Crear Registro</button>
 </form>
 
 <h2>Leer Registros</h2>
-<button onclick="fetchRecords()">Mostrar Registros</button>
+<button onclick="fetchRecords()">Mostrar Todos los Registros</button>
 <div id="records"></div>
+
+<h2>Buscar Registro por ID</h2>
+<form id="search-form">
+   <input type="number" id="search-id" placeholder="ID del Registro" required />
+   <button type="submit">Buscar Registro</button>
+</form>
+<div id="record-details"></div>
 
 <h2>Actualizar Registro</h2>
 <form id="update-form">
    <input type="number" id="update-id" placeholder="ID del Registro" required />
    <input type="text" id="update-nombre" placeholder="Nuevo Nombre" required />
    <input type="number" id="update-edad" placeholder="Nueva Edad" required />
-   <input type="text" id="update-carrera" placeholder="Nueva Carrera (mecanica, quimica, sistemas, electrica)" required maxlength="20"/>
+   <input type="number" id="update-carrera_id" placeholder="Nuevo ID de Carrera" required />
    <button type="submit">Actualizar Registro</button>
 </form>
 
