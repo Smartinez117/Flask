@@ -29,12 +29,15 @@ document.getElementById('update-form').addEventListener('submit', async function
     const edad = document.getElementById('update-edad').value;
     const carrera_id = document.getElementById('update-carrera_id').value;
 
+    // Obtener el nivel de aislamiento seleccionado
+    const transactionLevel = document.getElementById('transaction-level').value;
+
     const response = await fetch(`/update/${recordId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ nombre, edad, carrera_id })
+        body: JSON.stringify({ nombre, edad, carrera_id, transactionLevel }) // Enviar nivel de aislamiento
     });
 
     const result = await response.json();
@@ -89,4 +92,30 @@ document.getElementById('search-form').addEventListener('submit', async function
         alert(result.message); // Mostrar mensaje de error si el registro no se encuentra
         document.getElementById('record-details').innerHTML = '';
     }
+});
+
+// Manejo del formulario para probar transacciones
+document.getElementById('transaction-test-form').addEventListener('submit', async function(event) {
+     event.preventDefault();
+     
+     const transactionLevel = document.getElementById('transaction-test-level').value;
+
+     const response = await fetch('/test_transactions', {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ transactionLevel })
+     });
+
+     const result = await response.json();
+
+     // Mostrar alert basado en la respuesta del servidor
+     alert(result.message); // Mostrar mensaje de éxito o error
+
+     // Mostrar resultados si hay
+     if (result.results) {
+         const resultsDiv = document.getElementById('transaction-results');
+         resultsDiv.innerHTML += '<h3>Resultados:</h3><pre>' + JSON.stringify(result.results, null, 2) + '</pre>';
+     }
 });

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Registros</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Gestión de Registros</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 <h1>Gestión de Registros en PostgreSQL</h1>
 
 <h2>Insertar Registro</h2>
 <form id="create-form">
-   <input type="text" id="nombre" placeholder="Nombre" required />
-   <input type="number" id="edad" placeholder="Edad" required />
-   <input type="number" id="carrera_id" placeholder="ID de Carrera" required />
-   <button type="submit">Crear Registro</button>
+     <input type="text" id="nombre" placeholder="Nombre" required />
+     <input type="number" id="edad" placeholder="Edad" required />
+     <input type="number" id="carrera_id" placeholder="ID de Carrera" required />
+     <button type="submit">Crear Registro</button>
 </form>
 
 <h2>Leer Registros</h2>
@@ -23,25 +23,37 @@
 
 <h2>Buscar Registro por ID</h2>
 <form id="search-form">
-   <input type="number" id="search-id" placeholder="ID del Registro" required />
-   <button type="submit">Buscar Registro</button>
+     <input type="number" id="search-id" placeholder="ID del Registro" required />
+     <button type="submit">Buscar Registro</button>
 </form>
 <div id="record-details"></div>
 
 <h2>Actualizar Registro</h2>
 <form id="update-form">
-   <input type="number" id="update-id" placeholder="ID del Registro" required />
-   <input type="text" id="update-nombre" placeholder="Nuevo Nombre" required />
-   <input type="number" id="update-edad" placeholder="Nueva Edad" required />
-   <input type="number" id="update-carrera_id" placeholder="Nuevo ID de Carrera" required />
-   <button type="submit">Actualizar Registro</button>
+     <input type="number" id="update-id" placeholder="ID del Registro" required />
+     <input type="text" id="update-nombre" placeholder="Nuevo Nombre" required />
+     <input type="number" id="update-edad" placeholder="Nueva Edad" required />
+     <input type="number" id="update-carrera_id" placeholder="Nuevo ID de Carrera" required />
+
+     <!-- Dropdown para seleccionar el nivel de aislamiento -->
+     <select id="transaction-level">
+         <option value="">Seleccione Nivel de Aislamiento</option>
+         <option value="SERIALIZABLE">SERIALIZABLE</option>
+         <option value="READ COMMITTED">READ COMMITTED</option>
+         <option value="NO TRANSACTION">Sin Transacción</option> <!-- Opción sin transacción -->
+     </select>
+
+     <button type="submit">Actualizar Registro</button>
 </form>
 
 <h2>Eliminar Registro</h2>
 <form id="delete-form">
-   <input type="number" id="delete-id" placeholder="ID del Registro a Eliminar" required />
-   <button type="submit">Eliminar Registro</button>
+     <input type="number" id="delete-id" placeholder="ID del Registro a Eliminar" required />
+     <button type="submit">Eliminar Registro</button>
 </form>
+
+
+<div id="transaction-results"></div>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
