@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import psycopg2
+import time
 
 app = Flask(__name__)
 
@@ -52,7 +53,7 @@ def create_record():
     
     nombre = data['nombre']
     edad = int(data['edad'])
-    carrera_id = int(data['carrera_id'])  # Cambiado a ID de carrera
+    carrera_id = int(data['carrera_id'])
     
     conn = get_db_connection()
     
@@ -129,44 +130,82 @@ def update_record(record_id):
    nombre = data['nombre']
    edad = data['edad']
    carrera_id = int(data['carrera_id'])  # Cambiado a ID de carrera
+   transaction_level = data['transactionLevel']  # Obtener el nivel de aislamiento
    
    conn = get_db_connection()
    
-   cur = conn.cursor()
-   
-   # Verificar que la carrera existe
-   cur.execute("SELECT id FROM carreras WHERE id=%s", (carrera_id,))
-   
-   if cur.fetchone() is None:
-       return jsonify({'message': 'Carrera no válida.'}), 400
-   
-   cur.execute("UPDATE tablaprueba1 SET nombre=%s, edad=%s, carrera_id=%s WHERE id=%s", (nombre, edad, carrera_id, record_id))
-   
-   conn.commit()
+   try:
+       if transaction_level == "NO TRANSACTION":
+           with conn:
+               with conn.cursor() as cur:
+                   cur.execute("UPDATE tablaprueba1 SET nombre=%s, edad=%s, carrera_id=%s WHERE id=%s", (nombre, edad, carrera_id, record_id))
+                   if cur.rowcount == 0:
+                       return jsonify({'message': 'Registro no encontrado.'}), 404
+           return jsonify({'message': 'Registro actualizado exitosamente sin transacción.'})
 
-   if cur.rowcount == 0:
-       return jsonify({'message': 'Registro no encontrado.'}), 404
+       # Iniciar una transacción y establecer el nivel de aislamiento
+       with conn:
+           with conn.cursor() as cur:
+               if transaction_level == "SERIALIZABLE":
+                   cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;")
+               elif transaction_level == "READ COMMITTED":
+                   cur.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED;")
+               
+               # Simulación de una operación que podría ser afectada por el nivel de aislamiento
+               time.sleep(5)  # Simula un retraso en la operación
+               
+               # Actualizar el registro
+               cur.execute("UPDATE tablaprueba1 SET nombre=%s, edad=%s, carrera_id=%s WHERE id=%s", (nombre, edad, carrera_id, record_id))
+               
+               if cur.rowcount == 0:
+                   return jsonify({'message': 'Registro no encontrado.'}), 404
 
-   cur.close()
-   conn.close()
+       return jsonify({'message': 'Registro actualizado exitosamente con transacción.'})
+   
+   except Exception as e:
+       return jsonify({'message': str(e)}), 500
+   
+   finally:
+       conn.close()
 
-   return jsonify({'message': 'Registro actualizado exitosamente.'})
+@app.route('/test_transactions', methods=['POST'])
+def test_transactions():
+    transaction_level = request.json.get('transactionLevel')
+    
+    conn = get_db_connection()
+    
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                if transaction_level == "SERIALIZABLE":
+                    cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;")
+                elif transaction_level == "READ COMMITTED":
+                    cur.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED;")
+
+                time.sleep(5)  # Simula un retraso en la operación
+                
+                # Realizar una consulta para ver cómo se comporta el nivel de aislamiento
+                cur.execute("SELECT * FROM tablaprueba1;")
+                results = cur.fetchall()
+                
+                return jsonify({'message': 'Transacción completada.', 'results': results})
+    
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+    
+    finally:
+        conn.close()
 
 @app.route('/delete/<int:record_id>', methods=['DELETE'])
 def delete_record(record_id):
    conn = get_db_connection()
    
-   cur = conn.cursor()
-   
-   cur.execute("DELETE FROM tablaprueba1 WHERE id=%s", (record_id,))
-   
-   conn.commit()
-
-   if cur.rowcount == 0:
-       return jsonify({'message': 'Registro no encontrado.'}), 404
-
-   cur.close()
-   conn.close()
+   with conn:
+       with conn.cursor() as cur:
+           cur.execute("DELETE FROM tablaprueba1 WHERE id=%s", (record_id,))
+           
+           if cur.rowcount == 0:
+               return jsonify({'message': 'Registro no encontrado.'}), 404
 
    return jsonify({'message': 'Registro eliminado exitosamente.'})
 
